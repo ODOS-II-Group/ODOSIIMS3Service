@@ -1,0 +1,37 @@
+buildscript {
+    repositories {
+        // jcenter()
+         maven { url "http://nexus.lassiterdynamics.com:8081/repository/jcenter/" }
+    }
+
+    dependencies {
+        classpath 'com.bmuschko:gradle-docker-plugin:3.2.0'
+    }
+}
+
+apply plugin: com.bmuschko.gradle.docker.DockerRemoteApiPlugin
+
+import com.bmuschko.gradle.docker.tasks.image.DockerBuildImage
+
+task copyNewrelicFiles(type: Copy) {
+    description = "Copy newrelic configure file to build directory"
+    from 'src/main/docker'
+    into { "${project.buildDir}/docker" }
+    include "newrelic.yml"
+}
+
+task copyDockerFiles(type: Copy, dependsOn: 'copyNewrelicFiles') {
+    description = "Copy Dockerfile and required data to build directory"
+    from 'src/main/docker'
+    from "${project.buildDir}/libs"
+    into { "${project.buildDir}/docker" }
+    include "*"
+    exclude "**/*.yml"
+}
+
+task buildDocker(type: DockerBuildImage, dependsOn: 'copyDockerFiles') {
+    description = "Package application as Docker image"
+    group = "Docker"
+    inputDir = project.file("${project.buildDir}/docker")
+    tags = ["docker.lassiterdynamics.com:5000/odosiisvc3:latest".toString(), "odosiisvc3:${project.version}".toString()]
+}

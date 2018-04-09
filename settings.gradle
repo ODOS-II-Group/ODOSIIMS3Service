@@ -1,0 +1,9 @@
+
+// in settings.gradle MUST BE FIRST ENTRY
+pluginManagement {
+    repositories {
+        maven { url "http://nexus.lassiterdynamics.com:8081/repository/gradle-plugins/" }
+    }
+}
+
+rootProject.name = 'odosi-isvc-3'

@@ -1,0 +1,42 @@
+apiVersion: apps.openshift.io/v1
+kind: DeploymentConfig
+metadata:
+  labels:
+    app: odosiiconsole
+  name: odosiiconsole
+  # namespace: odos-test
+spec:
+  replicas: 1
+  selector:
+    deploymentconfig: odosiiconsole
+  template:
+    metadata:
+      labels:
+        app: odosiiconsole
+        deploymentconfig: odosiiconsole
+    spec:
+      containers:
+        - image: odosiisvc3:latest
+          imagePullPolicy: Always
+          name: odosiisvc3
+          ports:
+            - containerPort: 8083
+              protocol: TCP
+          resources: {}
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+  test: false
+  triggers:
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+          - odosiisvc3
+        from:
+          kind: ImageStreamTag
+          name: odosiisvc3:latest
+          # namespace: odos-test
+      type: ImageChange
+    - type: ConfigChange
