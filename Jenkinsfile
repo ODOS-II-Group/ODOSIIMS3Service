@@ -35,6 +35,7 @@ pipeline {
             steps {
               script{
                 Common.slack 'Fortify Scan...'
+                Common.fortify('src','reports', 4)
               }
             }
         }
@@ -74,6 +75,7 @@ pipeline {
             steps {
               script{
                 Common.slack 'Functional Testing...'
+                Common.runFT('odosiisvc3')
               }
             }
         }
@@ -81,6 +83,7 @@ pipeline {
             steps {
               script{
                 Common.slack 'Performance Testing...'
+                Common.runPT('odosiisvc3')
               }
             }
         }
